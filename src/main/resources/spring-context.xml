@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd">
+
+	<!-- 加载数据库配置文件 -->
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations" value="classpath:jdbc.properties" />
+	</bean>
+	<!-- 自动扫描包中DAO和Service -->
+	<context:component-scan base-package="com.angular.dao"></context:component-scan>
+	<context:component-scan base-package="com.angular.service"></context:component-scan>
+
+	<!-- 配置数据源 -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<!-- 指定连接池的驱动 -->
+		<property name="driverClass" value="com.mysql.jdbc.Driver"></property>
+		<!-- 连接数据库的URL -->
+		<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/angular" />
+		<!-- 指定连接池的数据库用户名 -->
+		<property name="user" value="root" />
+		<!-- 指定连接池的数据库用户名密码 -->
+		<property name="password" value="root" />
+		<!--连接池中保留最大连接数Default:15 -->
+		<property name="maxPoolSize" value="100" />
+		<!--连接池中保留最小连接数 -->
+		<property name="minPoolSize" value="1" />
+		<!--初始化时获取连接数取值应在minPoolSize和maxPoolSize的间Default:3 -->
+		<property name="initialPoolSize" value="1" />
+		<!--最大空闲时间,60秒内未使用则连接被丢弃若为0则永不丢弃Default:0 -->
+		<property name="maxIdleTime" value="60" />
+		<!--当连接池中连接耗尽时候c3p0次同时获取连接数Default:3 -->
+		<property name="acquireIncrement" value="5" />
+		<!--JDBC标准参数用以控制数据源内加载PreparedStatements数量但由于预缓存Cachestatements 属于单个connection而不是整个连接池所以设置这个参数需要考虑到多方面原因 如果maxStatements和maxStatementsPerConnection均为0则缓存Cache被关闭Default:0 -->
+		<property name="maxStatements" value="0" />
+		<!--每60秒检查所有连接池中空闲连接Default:0 -->
+		<property name="idleConnectionTestPeriod" value="60" />
+		<!--定义在从数据库获取新连接失败后重复尝试次数Default:30 -->
+		<property name="acquireRetryAttempts" value="10" />
+		<!--获取连接失败将会引起所有等待连接池来获取连接线程抛出异常但是数据源仍有效 保留并在下次getConnection时候继续尝试获取连接如果设为true那么在尝试 获取连接失败后该数据源将申明已断开并永久关闭Default:false -->
+		<!-- <property name="AfterAcquireFailure" value="true"/> -->
+		<!--因性能消耗大请只在需要时候使用它如果设为true那么在每个connection提交 时候都将校验其有效性建议使用idleConnectionTestPeriod或automaticTestTable 等思路方法来提升连接测试性能Default:false -->
+		<!-- <property name="testConnectionOnCheckout" value="true"/> -->
+	</bean>
+
+
+	<!-- 配置mybatis 开始 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"></property>
+		<!-- 自动扫描mappers.xml文件 ，要加上classpath:... -->
+		<property name="mapperLocations" value="classpath:mapper/*.xml"></property>
+		<!-- mybatis配置文件 -->
+		<property name="configLocation" value="classpath:mybatis-config.xml"></property>
+	</bean>
+
+	<!-- DAO接口所在包名，Spring会自动查找其下的类 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.angular.dao" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+	</bean>
+	<!-- 配置Mybatis 结束 -->
+
+	<!-- 配置事务管理 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<!-- 配置事务通知属性 -->
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">
+		<!-- 定义事务传播属性 -->
+		<tx:attributes>
+			<tx:method name="insert*" propagation="REQUIRED" />
+			<tx:method name="update*" propagation="REQUIRED" />
+			<tx:method name="edit*" propagation="REQUIRED" />
+			<tx:method name="save*" propagation="REQUIRED" />
+			<tx:method name="add*" propagation="REQUIRED" />
+			<tx:method name="new*" propagation="REQUIRED" />
+			<tx:method name="set*" propagation="REQUIRED" />
+			<tx:method name="remove*" propagation="REQUIRED" />
+			<tx:method name="delete*" propagation="REQUIRED" />
+			<tx:method name="change*" propagation="REQUIRED" />
+			<tx:method name="get*" propagation="REQUIRED" read-only="true" />
+			<tx:method name="find*" propagation="REQUIRED" read-only="true" />
+			<tx:method name="load*" propagation="REQUIRED" read-only="true" />
+			<tx:method name="*" propagation="REQUIRED" read-only="true" />
+		</tx:attributes>
+	</tx:advice>
+	<!-- 配置事务切面 -->
+	<aop:config>
+		<aop:pointcut id="serviceOperation" expression="execution(* com.angular.service.*.*(..))" />
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceOperation" />
+	</aop:config>
+</beans>
