@@ -1,9 +1,7 @@
  'use strict';
 /**
  * 
- */
- var appControllers = angular.module('AngularSpringmvcMybatis.controllers',[]);
- 
+ */ 
  appControllers.controller('UserController',['$scope','$http',function($scope,$http){
  	$scope.fetchUsersList = function() {
         $http.get('users/userlist.json').success(function(userList){
@@ -33,3 +31,4 @@
 
     $scope.fetchUsersList();
  }]);
+

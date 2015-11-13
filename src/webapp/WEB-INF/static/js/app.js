@@ -1,7 +1,7 @@
 /**
  * 
  */
- 
+'use strict';
  var app= angular.module('AngularSpringmvcMybatis',['AngularSpringmvcMybatis.controllers']);
  
  app.config(['$routerProvider',function($routerProvider){
@@ -11,3 +11,4 @@
  	});
  	 $routeProvider.otherwise({redirectTo: '/users'});
  }]);
+

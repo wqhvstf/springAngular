@@ -12,6 +12,7 @@
 <script type="text/javascript" src="${ctx}/static/angular/angular.min.js"></script>
 <script type="text/javascript" src="${ctx}/static/angular/angular-route.min.js"></script>
 
+
 <script type="text/javascript" src="${ctx}/static/js/app.js"></script>
 <script type="text/javascript" src="${ctx}/static/js/controllers/controllers.js"></script>
 <script type="text/javascript" src="${ctx}/static/js/directives/directives.js"></script>
