@@ -30,9 +30,9 @@
 		delete from t_user
 		where userId = #{userid,jdbcType=INTEGER}
 	</delete>
-	<delete id="deleteByUserName" parameterType="java.lang.Integer">
+	<delete id="deleteByUserName" parameterType="java.lang.String">
 		delete from t_user
-		where username = #{username,jdbcType=INTEGER}
+		where username = #{username,jdbcType=VARCHAR}
 	</delete>
 	<delete id="deleteAll">
 		delete from t_user

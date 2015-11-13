@@ -27,6 +27,7 @@
 		<ognl.version>3.1.1</ognl.version>
 		<jsp.version>2.2</jsp.version>
 		<jstl.version>1.2</jstl.version>
+		<jackjson.version>2.6.3</jackjson.version>
 	</properties>
 
 	<dependencies>
@@ -196,5 +197,17 @@
 			<version>${cglib.version}</version>
 		</dependency>
 		<!-- 字节码操作 AOP 结束 -->
+
+		<!-- jackjson -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>${jackjson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackjson.version}</version>
+		</dependency>
 	</dependencies>
 </project>
